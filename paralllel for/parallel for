@@ -1,1 +1,55 @@
+#include <iostream>
+#include <omp.h>
 
+
+double f(double x)
+{
+	return 1 / (x * x + 1);
+}
+
+/*double intsum(int n, int t, int m)
+{
+double res = 0;
+for (int i = t; i <= m; ++i)
+{
+res += (1./n) * f(1.0 * (2 * i - 1) / (2 * n));
+}
+return res;
+}*/
+
+
+int main()
+{
+	int n = 0;
+	std::cin >> n;
+	double res = 0;
+	double t = omp_get_wtime();
+#pragma parallel for schelude(dynamic, 3)
+	for (int i = 0; i <= n; ++i)
+	{
+		res += (1. / n) * f(1.0 * (2 * i - 1) / (2 * n));
+	}
+	std::cout << 4 * res << std::endl << " " << omp_get_wtime() - t << std::endl;
+	res = 0;
+	t = omp_get_wtime();
+
+#pragma parallel for schelude(guided, 2)
+	for (int i = 0; i <= n; ++i)
+	{
+		res += (1. / n) * f(1.0 * (2 * i - 1) / (2 * n));
+	}
+	std::cout << 4 * res << std::endl << " " << omp_get_wtime() - t << std::endl;
+	res = 0;
+	t = omp_get_wtime();
+
+#pragma parallel for schelude(static)
+	for (int i = 0; i <= n; ++i)
+	{
+		res += (1. / n) * f(1.0 * (2 * i - 1) / (2 * n));
+	}
+	std::cout << 4 * res << std::endl << " " << omp_get_wtime() - t << std::endl;
+
+	system("pause");
+
+	return EXIT_SUCCESS;
+}
