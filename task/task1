@@ -1,0 +1,99 @@
+#include <iostream>
+#include <omp.h>
+
+double f(double x)
+{
+    return 1/(x*x + 1);
+}
+
+double integr(double a, double b, double (*f)(double x))
+{
+    double k = (b - a)/10;
+    double sum = 0;
+    for (int i = 0; i < 10; ++i)
+        {
+            sum += f(a + k * i) * k;
+        }
+        return sum;
+}
+
+double integral(double a, double b, double (*f)(double x))
+{
+    double A = integr(a, b, f);
+    double B = integr(a, (a + b)/2, f);
+    double C = integr((a + b)/2, b, f);
+    double delta = abs(A - (B + C));
+    if (delta < 1e-10)
+    {
+        return A;
+    }
+    else
+    {
+#pragma omp parallel
+        {
+#pragma omp single
+            {
+#pragma omp task
+                {
+                    A = integral(a, (a + b)/2, f);
+                }
+#pragma omp task
+                {
+                    B = integral((a + b)/2, b, f);
+                }
+            }
+        }
+        return A + B;
+    }
+}
+
+int main()
+{
+    std::cout << 4 * integral(0, 1, f);
+
+    return 0;
+}
+-------------------------------------------------------------------------------------------
+
+
+#include <iostream>
+#include <omp.h>
+
+double f(double x)
+{
+    return 1/(x*x + 1);
+}
+
+double integr(double a, double b, double (*f)(double x))
+{
+    double k = (b - a)/10;
+    double sum = 0;
+    for (int i = 0; i < 10; ++i)
+        {
+            sum += f(a + k * i) * k;
+        }
+        return sum;
+}
+
+double integral(double a, double b, double f(double x))
+{
+    double A = integr(a, b, f);
+    double B = integr(a, (a + b)/2, f);
+    double C = integr((a + b)/2, b, f);
+    double delta = abs(A - (B + C));
+    if (delta <= 1e-10)
+    {
+        return A;
+    }
+    else
+    {
+        return integral(a, (a + b)/2, f) + integral((a + b)/2, b, f);
+    }
+}
+
+int main()
+{
+    std::cout << 4 * integr(0, 1, f);
+
+    return 0;
+}
