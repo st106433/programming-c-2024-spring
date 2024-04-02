@@ -1,1 +1,99 @@
 
+#include <iostream>
+
+void Divide(double** M, int i, double k, int n)
+{
+    for (int j = 0; j <= n; j++)
+    {
+        M[i][j] = M[i][j] / k;
+    }
+}
+
+void Substract(double** M, int i, int j, double g, int n)
+{
+    for (int k = 0; k <= n; k++)
+    {
+        M[i][k] -= g * M[j][k];
+    }
+}
+
+void Swap(double** M, int i, int j, int n)
+{
+    int c = 0;
+    for (int k = 0; k <= n; k++)
+    {
+        c = M[i][k];
+        M[i][k] = M[j][k];
+        M[j][k] = c;
+    }
+}
+
+void Transform(double** M, int n)
+{
+    for (int j = 0; j <= n - 1; j++)
+    {
+        bool c = 1;
+        for (int i = 0; i <= n; i ++)
+        {
+            if (M[i][j] != 0)
+            {
+                Swap(M, j, i, n);
+                c = 0;
+                Divide(M, j, M[j][j], n);
+                break;
+            }
+        }
+        if (c == 1)
+        {
+            for (int i = j + 1; i <= n; i ++)
+            {
+                Substract(M, i, j, M[i][j], n);
+            }
+        }
+        c = 0;
+    }
+}
+
+void Print(double** M, int n, int m)
+{
+    for (int i = 0; i <= n - 1; i++)
+    {
+        for (int j = 0; j <= m - 1; j++)
+        {
+            std::cout << M[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void Cin(double** M, int n, int m)
+{
+    for (int i = 0; i <= n - 1; i++)
+    {
+        for (int j = 0; j <= m - 1; j++)
+        {
+            std::cin >> M[i][j];
+        }
+    }
+}
+
+
+
+
+int main()
+{
+    int n = 0;
+    std::cin >> n;
+    
+    double **matrix = new double* [n];
+    for (int i = 0; i <= n - 1; i++)
+    {
+        matrix[i] = new double [n + 1];
+    }
+    
+    Cin(matrix, n, n + 1);
+    Transform(matrix, n);
+    Print (matrix, n, n + 1);
+    
+    return EXIT_SUCCESS;
+}
