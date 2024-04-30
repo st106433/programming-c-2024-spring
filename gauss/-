@@ -39,6 +39,8 @@ void Print(double** M, int n, int m)
     }
 }
 
+/* TRANSFORM */
+
 void Transform(double** M, int n)
 {
     for (int j = 0; j <= n - 1; j++)
@@ -48,17 +50,11 @@ void Transform(double** M, int n)
             if (M[i][j] != 0)
             {
                 Swap(M, j, i, n);
-                Print (M, n, n + 1);
-                std::cout << std::endl;
                 Divide(M, j, M[j][j], n);
-                Print (M, n, n + 1);
-                std::cout << std::endl;
                 
                 for (int k = j + 1; k <= n - 1; k ++)
                 {
                     Substract(M, k, j, M[k][j], n);
-                    Print (M, n, n + 1);
-                    std::cout << std::endl;
                 }
                 
             }
@@ -66,7 +62,6 @@ void Transform(double** M, int n)
         }
         
     }
-    std::cout << "-----------------" << std::endl;
 }
 
 void Transform2(double** M, int n)
@@ -74,13 +69,83 @@ void Transform2(double** M, int n)
     for (int i = 0; i <= n - 2; i++)
     {
         int k = n - 2 - i;
-        for (int j = k; j <= n - 1; j ++)
+        for (int j = k + 1; j <= n - 1; j ++)
         {
             Substract(M, k, j, M[k][j], n);
-            Print (M, n, n + 1);
-            std::cout << std::endl;
         }
         
+    }
+}
+
+
+/* PARALLEL */
+
+
+void pTransform(double** M, int n)
+{
+    for (int j = 0; j <= n - 1; j++)
+    {
+        for (int i = j; i <= n - 1; i ++)
+        {
+            if (M[i][j] != 0)
+            {
+                Swap(M, j, i, n);
+                Divide(M, j, M[j][j], n);
+#pragma omp parallel for
+                for (int k = j + 1; k <= n - 1; k ++)
+                {
+                    Substract(M, k, j, M[k][j], n);
+                }
+                
+            }
+            
+        }
+        
+    }
+}
+
+void pTransform2(double** M, int n)
+{
+    for (int i = 0; i <= n - 2; i++)
+    {
+        int k = n - 2 - i;
+#pragma omp parallel for
+        for (int j = k + 1; j <= n - 1; j ++)
+        {
+            Substract(M, k, j, M[k][j], n);
+        }
+        
+    }
+}
+
+/* MAX */
+
+int MaxElem(double** M, int i_0, int i_1, int j)
+{
+    int c = M[i_0][j];
+    int q = i_0;
+    for (int i = i_0; i <= i_1; i++)
+    {
+        if (c <= M[i][j])
+        {
+            c = M[i][j];
+            q = i;
+        }
+    }
+    return q;
+}
+
+
+void pmaxTransform(double** M, int n)
+{
+    for (int j = 0; j <= n - 1; j++)
+    {
+        Swap(M, MaxElem(M, j, n - 1, j), j, n);
+#pragma omp parallel for
+        for (int k = j + 1; k <= n - 1; k ++)
+        {
+            Substract(M, k, j, M[k][j], n);
+        }
     }
 }
 
@@ -111,9 +176,18 @@ int main()
     }
     
     Cin(matrix, n, n + 1);
-    Transform(matrix, n);
+    pTransform(matrix, n);
+    std::cout << std::endl;
     Print (matrix, n, n + 1);
-    Transform2(matrix, n);
+    std::cout << std::endl;
+    pTransform2(matrix, n);
+    Print (matrix, n, n + 1);  
+/*
+4
+1 2 3 4 7
+3 4 1 7 2
+8 3 1 6 3
+5 1 8 2 1 */
     
     return EXIT_SUCCESS;
 }
