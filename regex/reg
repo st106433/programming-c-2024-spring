@@ -1,0 +1,69 @@
+#include <iostream>
+#include <regex>
+
+//*******1*********
+
+bool ex_match(const std::string& s)
+{
+	std::regex pattern(".*000.*");
+	return regex_match(s, pattern);
+}
+
+bool ex_search(const std::string& s)
+{
+	std::string str = "000";
+	return regex_search(s, std::regex(str));
+}
+
+//**********2*************
+
+bool ex_match(const std::string& s)
+{
+	std::regex pattern(".*101.*");
+	return regex_match(s, pattern);
+}
+
+bool ex_search(const std::string& s)
+{
+	std::string str = "101";
+	return regex_search(s, std::regex(str));
+}
+//***********3*************
+
+bool ex_match(const std::string& s)
+{
+	std::regex pattern("(101.*)|(.*101)");
+	return regex_match(s, pattern);
+}
+bool ex_search(const std::string& s)
+{
+	std::regex pattern("^101|101$");
+	return regex_search(s, pattern);
+}
+
+//*************4*************
+
+bool ex_match(const std::string& s)
+{
+    std::regex pattern("^[0-9]*1[0-9]*$");
+	return regex_match(s, pattern);
+}
+bool ex_search(const std::string& s)
+{
+	std::regex pattern("1");
+	return regex_search(s, pattern);
+}
+
+//**********************5*****************
+
+bool ex_match(const std::string& s)
+{
+	std::regex pattern("(0|[2-9])*");
+	return std::regex_match(s, pattern);
+}
+bool ex_search(const std::string& s)
+{
+	std::regex pattern1("^[0-9]*$");
+  std::regex pattern2("1");
+	return std::regex_search(s, pattern1) && !std::regex_search(s, pattern2);
+}
