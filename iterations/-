@@ -86,17 +86,18 @@ public:
         Matrix D(n, 1);
         for (int i = 0; i <= n - 1; i++)
             {
-                D.a[i][n] = a[i][n];
+                D.a[i][0] = a[i][n];
             }
         double C = B.MatrixNorm()/(1 - B.MatrixNorm()) * ((B * X + D).MatrixNorm() - X.MatrixNorm());
         if (fabs(C) >= epsilon)
         {
-            Matrix Q = B * X + D;
-            MatrixSimple_Iter_Method(Q, epsilon);
+            X = B * X + D;
+            std::cout << X;
+            MatrixSimple_Iter_Method(X, epsilon);
         }
         else
         {
-            return B * X + D;
+            std::cout << B * X + D;
         }
     }
 };
@@ -223,21 +224,21 @@ int main()
 	int n = 3;
 	Matrix A(n, n + 1);
 	Matrix x_0(n, 1), x(n, 1);
-
+/*
 	A(0, 0) = 7;  A(0, 1) = 2;  A(0, 2) = 1;  A(0, 3) = 15;
 	A(1, 0) = 4;  A(1, 1) = 9;  A(1, 2) = 1;  A(1, 3) = 26;
 	A(2, 0) = 2;  A(2, 1) = 3;  A(2, 2) = 6;  A(2, 3) = 32;
-
+ */
 	x_0(0, 0) = 0;  x_0(1, 0) = 0;  x_0(2, 0) = 0;
 
 	// ответ 1 2 4
 
-/*
+
 	A(0, 0) = 3.278164;  A(0, 1) = 1.046583;  A(0, 2) = -1.378574;  A(0, 3) = -0.527466;
 	A(1, 0) = 1.046583;  A(1, 1) = 2.975937;  A(1, 2) = 0.934251;   A(1, 3) = 2.526877;
 	A(2, 0) = -1.378574; A(2, 1) = 0.934251;  A(2, 2) = 4.836173;   A(2, 3) = 5.165441;
 	// ответ ~  0.1  0.5  1
- */
+ 
 
 	std::cout << "x_0: " << std::endl;
 	std::cout << x_0 << std::endl;
